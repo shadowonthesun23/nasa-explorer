@@ -115,8 +115,6 @@ export default function App() {
       setResults(items);
       setTotalResults(total);
 
-      // Auto-selezione rimossa per mantenere lo stato pulito all'avvio
-
     } catch (err) {
       setError(err.message);
       setResults([]);
@@ -265,7 +263,7 @@ export default function App() {
       <div className="flex flex-col md:flex-row h-full w-full bg-white dark:bg-slate-900 md:rounded-xl md:shadow-2xl overflow-hidden md:border border-gray-200 dark:border-slate-800 relative transition-colors duration-300">
 
         {/* COLONNA SINISTRA */}
-        <div className={`w-full md:w-64 bg-gray-50 dark:bg-slate-800/40 flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-slate-800 shrink-0 transition-colors duration-300 ${isMobileMenuOpen ? 'absolute inset-0 z-40' : 'relative z-10'}`}>
+        <div className={`w-full md:w-64 bg-gray-50 dark:bg-slate-900 flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-slate-800 shrink-0 transition-colors duration-300 ${isMobileMenuOpen ? 'absolute inset-0 z-40' : 'relative z-10'}`}>
 
           {/* Header Compattato */}
           <div className="relative flex items-center justify-center py-5 px-4 bg-slate-950 shrink-0 overflow-hidden text-center md:border-b border-slate-800">
@@ -297,17 +295,17 @@ export default function App() {
           </div>
 
           {/* Menu Navigazione Compattato */}
-          <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:block px-3 py-2 border-b border-gray-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/80 shrink-0`}>
+          <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:block px-3 py-2 border-b border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0`}>
             <div className="space-y-1">
               <button
                 onClick={() => { setActiveTab('library'); setIsMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === 'library' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700/50'}`}
+                className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === 'library' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
               >
                 <LayoutGrid className="w-4 h-4" /> Libreria
               </button>
               <button
                 onClick={() => { setActiveTab('apod'); setIsMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === 'apod' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700/50'}`}
+                className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === 'apod' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
               >
                 <Star className="w-4 h-4" /> Foto del Giorno
               </button>
@@ -315,7 +313,7 @@ export default function App() {
           </div>
 
           {/* Area Scorrevole: Filtri */}
-          <div className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-col flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-900/50`}>
+          <div className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-col flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-900`}>
             {activeTab === 'library' ? (
               <div className="p-4 space-y-5 flex-1">
                 <div className="space-y-1">
@@ -326,7 +324,7 @@ export default function App() {
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      className="w-full bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 dark:text-white rounded-md py-1.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 dark:text-white rounded-md py-1.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       placeholder="Es. Apollo 11"
                     />
                   </div>
@@ -341,7 +339,7 @@ export default function App() {
                       <select
                         value={mediaType}
                         onChange={(e) => setMediaType(e.target.value)}
-                        className="w-full appearance-none bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 dark:text-white rounded-md py-1.5 px-3 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full appearance-none bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 dark:text-white rounded-md py-1.5 px-3 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="">Tutti</option>
                         <option value="image">Immagini</option>
@@ -357,7 +355,7 @@ export default function App() {
                       <select
                         value={sortOrder}
                         onChange={(e) => setSortOrder(e.target.value)}
-                        className="w-full appearance-none bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 dark:text-white rounded-md py-1.5 px-3 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full appearance-none bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 dark:text-white rounded-md py-1.5 px-3 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="newest">Più recenti</option>
                         <option value="oldest">Meno recenti</option>
@@ -380,7 +378,7 @@ export default function App() {
                         placeholder="Da"
                         value={yearStart}
                         onChange={(e) => setYearStart(e.target.value)}
-                        className="w-full bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 dark:text-white rounded-md py-1.5 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 dark:text-white rounded-md py-1.5 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <span className="text-gray-400 dark:text-slate-500">-</span>
                       <input
@@ -388,7 +386,7 @@ export default function App() {
                         placeholder="A"
                         value={yearEnd}
                         onChange={(e) => setYearEnd(e.target.value)}
-                        className="w-full bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 dark:text-white rounded-md py-1.5 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 dark:text-white rounded-md py-1.5 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
@@ -403,11 +401,11 @@ export default function App() {
 
             {/* Pulsanti Ricerca */}
             {activeTab === 'library' && (
-              <div className="p-3 border-t border-gray-200 dark:border-slate-700/50 shrink-0 bg-gray-50 dark:bg-transparent">
+              <div className="p-3 border-t border-gray-200 dark:border-slate-800 shrink-0 bg-gray-50 dark:bg-slate-900">
                 <div className="flex gap-2">
                   <button
                     onClick={clearFilters}
-                    className="flex-1 py-1.5 px-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                    className="flex-1 py-1.5 px-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
                   >
                     Pulisci
                   </button>
@@ -422,7 +420,7 @@ export default function App() {
             )}
 
             {/* Footer Personalizzato Compattato */}
-            <div className="mt-auto border-t border-gray-200 dark:border-slate-700/50 bg-gray-100/50 dark:bg-slate-800/30 p-4 shrink-0 flex flex-col items-center justify-center gap-3">
+            <div className="mt-auto border-t border-gray-200 dark:border-slate-800 bg-gray-100 dark:bg-slate-950 p-4 shrink-0 flex flex-col items-center justify-center gap-3">
               <style>
                 {`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap');`}
               </style>
@@ -716,4 +714,3 @@ export default function App() {
     </div>
   );
 }
-
