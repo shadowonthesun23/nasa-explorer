@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Search, Download, Image as ImageIcon, Video, X, ChevronDown, Loader2, Menu, Sun, Moon, Coffee, LayoutGrid, Star, ExternalLink, Languages } from 'lucide-react';
+import { Search, Download, Image as ImageIcon, Video, X, ChevronDown, Loader2, Menu, Sun, Moon, Coffee, LayoutGrid, Star, ExternalLink, Languages, MousePointerClick } from 'lucide-react';
 
 export default function App() {
   // Stato Globale App
@@ -115,9 +115,8 @@ export default function App() {
       setResults(items);
       setTotalResults(total);
 
-      if (items.length > 0 && window.innerWidth >= 768) {
-        setSelectedItem(items[0]);
-      }
+      // Auto-selezione rimossa per mantenere lo stato pulito all'avvio
+
     } catch (err) {
       setError(err.message);
       setResults([]);
@@ -268,62 +267,59 @@ export default function App() {
         {/* COLONNA SINISTRA */}
         <div className={`w-full md:w-64 bg-gray-50 dark:bg-slate-800/40 flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-slate-800 shrink-0 transition-colors duration-300 ${isMobileMenuOpen ? 'absolute inset-0 z-40' : 'relative z-10'}`}>
 
-          {/* Header */}
-          <div className="relative flex items-center justify-center p-6 bg-slate-950 shrink-0 overflow-hidden text-center md:border-b border-slate-800">
+          {/* Header Compattato */}
+          <div className="relative flex items-center justify-center py-5 px-4 bg-slate-950 shrink-0 overflow-hidden text-center md:border-b border-slate-800">
             <div className="absolute inset-0 bg-gradient-to-b from-blue-900/30 to-slate-950"></div>
             <div className="absolute inset-0 opacity-[0.15] mix-blend-screen pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden absolute top-4 left-4 p-2 text-slate-300 hover:text-white bg-white/10 rounded-md backdrop-blur-sm transition-colors z-20"
+              className="md:hidden absolute top-3 left-3 p-2 text-slate-300 hover:text-white bg-white/10 rounded-md backdrop-blur-sm transition-colors z-20"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
 
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="absolute top-4 right-4 p-2 text-slate-300 hover:text-white bg-white/10 rounded-md backdrop-blur-sm transition-colors z-20"
+              className="absolute top-3 right-3 p-2 text-slate-300 hover:text-white bg-white/10 rounded-md backdrop-blur-sm transition-colors z-20"
               title="Cambia Tema"
             >
-              {isDarkMode ? <Sun className="w-5 h-5 md:w-4 md:h-4" /> : <Moon className="w-5 h-5 md:w-4 md:h-4" />}
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
 
-            <div className="flex flex-col items-center relative z-10 w-full mt-2 md:mt-0">
+            <div className="flex flex-col items-center relative z-10 w-full mt-1 md:mt-0">
               <img
                 src="/logo.png"
                 alt="NASA Explorer Logo"
-                className="w-16 md:w-24 h-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                className="w-16 md:w-20 h-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
               />
-              <p className="hidden md:block text-[11px] text-slate-400 leading-relaxed mt-4 px-2">
-                Ricerca e scarica asset fotografici e video. Usa i filtri per raffinare i risultati e seleziona un file per scaricare il formato originale.
-              </p>
             </div>
           </div>
 
-          {/* Menu Navigazione */}
-          <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:block px-4 py-3 border-b border-gray-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/80 shrink-0`}>
+          {/* Menu Navigazione Compattato */}
+          <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:block px-3 py-2 border-b border-gray-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/80 shrink-0`}>
             <div className="space-y-1">
               <button
                 onClick={() => { setActiveTab('library'); setIsMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'library' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700/50'}`}
+                className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === 'library' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700/50'}`}
               >
                 <LayoutGrid className="w-4 h-4" /> Libreria
               </button>
               <button
                 onClick={() => { setActiveTab('apod'); setIsMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'apod' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700/50'}`}
+                className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === 'apod' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700/50'}`}
               >
                 <Star className="w-4 h-4" /> Foto del Giorno
               </button>
             </div>
           </div>
 
-          {/* Area Scorrevole: Filtri (Visibile solo in Libreria) */}
+          {/* Area Scorrevole: Filtri */}
           <div className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-col flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-900/50`}>
             {activeTab === 'library' ? (
-              <div className="p-4 space-y-6 flex-1">
+              <div className="p-4 space-y-5 flex-1">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Ricerca</label>
+                  <label className="text-[11px] font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Ricerca</label>
                   <div className="relative">
                     <input
                       type="text"
@@ -336,8 +332,8 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Filtri Base</label>
+                <div className="space-y-3">
+                  <label className="text-[11px] font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Filtri Base</label>
 
                   <div className="space-y-1">
                     <span className="text-xs text-gray-600 dark:text-slate-300">Tipo di Media</span>
@@ -365,7 +361,7 @@ export default function App() {
                       >
                         <option value="newest">Più recenti</option>
                         <option value="oldest">Meno recenti</option>
-                        <option value="relevance">Rilevanza (Default NASA)</option>
+                        <option value="relevance">Rilevanza (Default)</option>
                       </select>
                       <ChevronDown className="absolute right-2 top-2 h-4 w-4 text-gray-500 dark:text-slate-400 pointer-events-none" />
                     </div>
@@ -373,7 +369,7 @@ export default function App() {
 
                   <div className="space-y-1">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-600 dark:text-slate-300">Anno di Creazione</span>
+                      <span className="text-xs text-gray-600 dark:text-slate-300">Anno</span>
                       {(yearStart || yearEnd) && (
                         <button onClick={() => { setYearStart(''); setYearEnd(''); }} className="text-[10px] text-blue-500 hover:underline">Azzera</button>
                       )}
@@ -381,7 +377,7 @@ export default function App() {
                     <div className="flex items-center gap-2">
                       <input
                         type="number"
-                        placeholder="Da (es. 2020)"
+                        placeholder="Da"
                         value={yearStart}
                         onChange={(e) => setYearStart(e.target.value)}
                         className="w-full bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 dark:text-white rounded-md py-1.5 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -389,7 +385,7 @@ export default function App() {
                       <span className="text-gray-400 dark:text-slate-500">-</span>
                       <input
                         type="number"
-                        placeholder="A (es. 2024)"
+                        placeholder="A"
                         value={yearEnd}
                         onChange={(e) => setYearEnd(e.target.value)}
                         className="w-full bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 dark:text-white rounded-md py-1.5 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -400,14 +396,14 @@ export default function App() {
               </div>
             ) : (
               <div className="p-6 flex-1 flex flex-col justify-center items-center text-center opacity-50">
-                <Star className="w-12 h-12 text-gray-400 dark:text-slate-600 mb-4" />
-                <p className="text-sm text-gray-500 dark:text-slate-400">I filtri di ricerca sono disabilitati<br />nella sezione Foto del Giorno.</p>
+                <Star className="w-10 h-10 text-gray-400 dark:text-slate-600 mb-3" />
+                <p className="text-[11px] text-gray-500 dark:text-slate-400 leading-tight">I filtri sono disabilitati<br />nella Foto del Giorno.</p>
               </div>
             )}
 
-            {/* Pulsanti Ricerca (Visibili solo in Libreria) */}
+            {/* Pulsanti Ricerca */}
             {activeTab === 'library' && (
-              <div className="p-4 border-t border-gray-200 dark:border-slate-700/50 shrink-0 bg-gray-50 dark:bg-transparent">
+              <div className="p-3 border-t border-gray-200 dark:border-slate-700/50 shrink-0 bg-gray-50 dark:bg-transparent">
                 <div className="flex gap-2">
                   <button
                     onClick={clearFilters}
@@ -425,32 +421,32 @@ export default function App() {
               </div>
             )}
 
-            {/* Footer Personalizzato (Sempre Visibile in fondo alla Sidebar) */}
-            <div className="mt-auto border-t border-gray-200 dark:border-slate-700/50 bg-gray-100/50 dark:bg-slate-800/30 p-5 shrink-0 flex flex-col items-center justify-center gap-4">
+            {/* Footer Personalizzato Compattato */}
+            <div className="mt-auto border-t border-gray-200 dark:border-slate-700/50 bg-gray-100/50 dark:bg-slate-800/30 p-4 shrink-0 flex flex-col items-center justify-center gap-3">
               <style>
                 {`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap');`}
               </style>
-              <div className="flex flex-col items-center gap-1.5 px-2">
+              <div className="flex flex-col items-center gap-1 px-1">
                 <span
-                  className="text-[12px] text-gray-500 dark:text-slate-400 text-center leading-relaxed"
+                  className="text-[11px] text-gray-500 dark:text-slate-400 text-center leading-snug"
                   style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', textShadow: isDarkMode ? '0px 1px 2px rgba(0,0,0,0.5)' : '0px 1px 0px rgba(255, 255, 255, 0.9)' }}
                 >
                   "Da qualche parte, qualcosa di incredibile attende di essere scoperto."
                 </span>
-                <span className="text-[9px] text-gray-400 dark:text-slate-500 uppercase tracking-widest">— Carl Sagan</span>
+                <span className="text-[8px] text-gray-400 dark:text-slate-500 uppercase tracking-widest">— Carl Sagan</span>
               </div>
-              <div className="flex flex-wrap justify-center items-center gap-4 mt-1">
-                <a href="https://x.com/antonello23" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-gray-400 dark:text-slate-500 hover:text-black dark:hover:text-white transition-colors">
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
-                  <span className="text-[10px] font-medium">@antonello23</span>
+              <div className="flex flex-wrap justify-center items-center gap-3 mt-0.5">
+                <a href="https://x.com/antonello23" target="_blank" rel="noreferrer" className="flex items-center gap-1 text-gray-400 dark:text-slate-500 hover:text-black dark:hover:text-white transition-colors">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+                  <span className="text-[9px] font-medium">@antonello23</span>
                 </a>
-                <a href="https://instagram.com/antonelloan23" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-gray-400 dark:text-slate-500 hover:text-pink-600 dark:hover:text-pink-500 transition-colors">
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 21.986 8.741 22 12 22c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" /></svg>
-                  <span className="text-[10px] font-medium">@antonelloan23</span>
+                <a href="https://instagram.com/antonelloan23" target="_blank" rel="noreferrer" className="flex items-center gap-1 text-gray-400 dark:text-slate-500 hover:text-pink-600 dark:hover:text-pink-500 transition-colors">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 21.986 8.741 22 12 22c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" /></svg>
+                  <span className="text-[9px] font-medium">@antonelloan23</span>
                 </a>
-                <a href="https://buymeacoffee.com/antonello23" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-gray-400 dark:text-slate-500 hover:text-yellow-600 dark:hover:text-yellow-500 transition-colors">
-                  <Coffee className="w-3.5 h-3.5" />
-                  <span className="text-[10px] font-medium">Buy me a coffee</span>
+                <a href="https://buymeacoffee.com/antonello23" target="_blank" rel="noreferrer" className="flex items-center gap-1 text-gray-400 dark:text-slate-500 hover:text-yellow-600 dark:hover:text-yellow-500 transition-colors">
+                  <Coffee className="w-3 h-3" />
+                  <span className="text-[9px] font-medium">Buy me a coffee</span>
                 </a>
               </div>
             </div>
@@ -536,8 +532,8 @@ export default function App() {
               </div>
             </div>
 
-            {/* Pannello Dettagli */}
-            {selectedItem && (
+            {/* Pannello Dettagli (Solo se un elemento è selezionato) */}
+            {selectedItem ? (
               <div className="fixed inset-0 z-50 md:relative md:w-[360px] bg-white dark:bg-slate-900 flex flex-col shrink-0 animate-in fade-in md:animate-none transition-colors duration-300">
                 <div className="p-4 flex items-center justify-between border-b border-gray-200 dark:border-slate-800 h-14 md:h-12 shrink-0 bg-white dark:bg-slate-900">
                   <h2 className="font-semibold text-base md:text-sm">Dettagli Elemento</h2>
@@ -621,6 +617,13 @@ export default function App() {
                     {downloading ? 'Recupero File...' : 'Scarica Originale'}
                   </button>
                 </div>
+              </div>
+            ) : (
+              /* Empty State per il Pannello Dettagli (Visibile solo su Desktop) */
+              <div className="hidden md:flex flex-col items-center justify-center w-[360px] bg-gray-50/50 dark:bg-slate-900/50 shrink-0 transition-colors duration-300 text-center px-6">
+                <MousePointerClick className="w-12 h-12 text-gray-300 dark:text-slate-700 mb-4" />
+                <p className="text-sm font-medium text-gray-600 dark:text-slate-400">Nessun elemento selezionato</p>
+                <p className="text-xs text-gray-500 dark:text-slate-500 mt-1">Clicca su una foto o un video nella griglia per visualizzarne i dettagli e scaricare il formato originale.</p>
               </div>
             )}
           </>
