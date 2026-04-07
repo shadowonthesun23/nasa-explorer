@@ -72,18 +72,20 @@ export default function App() {
       let items = [];
       let total = 0;
 
+      const appendParams = (url) => {
+        url.searchParams.append('q', query.trim());
+        if (yearStart) url.searchParams.append('year_start', yearStart);
+        if (yearEnd) url.searchParams.append('year_end', yearEnd);
+      };
+
       if (!mediaType) {
         const urlImages = new URL(baseUrl);
-        urlImages.searchParams.append('q', query);
         urlImages.searchParams.append('media_type', 'image');
-        if (yearStart) urlImages.searchParams.append('year_start', yearStart);
-        if (yearEnd) urlImages.searchParams.append('year_end', yearEnd);
+        appendParams(urlImages);
 
         const urlVideos = new URL(baseUrl);
-        urlVideos.searchParams.append('q', query);
         urlVideos.searchParams.append('media_type', 'video');
-        if (yearStart) urlVideos.searchParams.append('year_start', yearStart);
-        if (yearEnd) urlVideos.searchParams.append('year_end', yearEnd);
+        appendParams(urlVideos);
 
         const [resImages, resVideos] = await Promise.all([
           fetch(urlImages),
@@ -99,10 +101,8 @@ export default function App() {
         total = dataImages.collection.metadata.total_hits + dataVideos.collection.metadata.total_hits;
       } else {
         const url = new URL(baseUrl);
-        url.searchParams.append('q', query);
         url.searchParams.append('media_type', mediaType);
-        if (yearStart) url.searchParams.append('year_start', yearStart);
-        if (yearEnd) url.searchParams.append('year_end', yearEnd);
+        appendParams(url);
 
         const response = await fetch(url);
         if (!response.ok) throw new Error('Errore nella comunicazione con i server NASA');
