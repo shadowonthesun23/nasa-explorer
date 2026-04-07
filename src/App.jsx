@@ -7,6 +7,7 @@ export default function App() {
 
   // Stato per i filtri di ricerca (Libreria)
   const [query, setQuery] = useState('Artemis');
+  const [searchField, setSearchField] = useState('q'); // 'q' | 'title' | 'description'
   const [mediaType, setMediaType] = useState('');
   const [yearStart, setYearStart] = useState('');
   const [yearEnd, setYearEnd] = useState('');
@@ -73,7 +74,10 @@ export default function App() {
       let total = 0;
 
       const appendParams = (url) => {
-        url.searchParams.append('q', query.trim());
+        const trimmedQuery = query.trim();
+        if (trimmedQuery) {
+          url.searchParams.append(searchField, trimmedQuery);
+        }
         if (yearStart) url.searchParams.append('year_start', yearStart);
         if (yearEnd) url.searchParams.append('year_end', yearEnd);
       };
@@ -122,7 +126,7 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  }, [query, mediaType, yearStart, yearEnd]);
+  }, [query, searchField, mediaType, yearStart, yearEnd]);
 
   useEffect(() => {
     if (activeTab === 'library' && results.length === 0 && !loading && !error) {
@@ -197,6 +201,7 @@ export default function App() {
 
   const clearFilters = () => {
     setQuery('');
+    setSearchField('q');
     setMediaType('');
     setYearStart('');
     setYearEnd('');
@@ -328,6 +333,18 @@ export default function App() {
                       placeholder="Es. Apollo 11"
                     />
                   </div>
+                  <div className="relative mt-2">
+                    <select
+                      value={searchField}
+                      onChange={(e) => setSearchField(e.target.value)}
+                      className="w-full appearance-none bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 text-gray-600 dark:text-slate-300 rounded-md py-1 px-3 pr-8 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+                    >
+                      <option value="q">Ovunque (Titolo, Descr, Tag)</option>
+                      <option value="title">Solo nel Titolo</option>
+                      <option value="description">Solo nella Descrizione</option>
+                    </select>
+                    <ChevronDown className="absolute right-2 top-1.5 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
+                  </div>
                 </div>
 
                 <div className="space-y-3">
@@ -357,9 +374,9 @@ export default function App() {
                         onChange={(e) => setSortOrder(e.target.value)}
                         className="w-full appearance-none bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 dark:text-white rounded-md py-1.5 px-3 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
-                        <option value="newest">Più recenti</option>
-                        <option value="oldest">Meno recenti</option>
-                        <option value="relevance">Rilevanza (Default)</option>
+                        <option value="newest">Cronologico (sui risultati)</option>
+                        <option value="oldest">Cronologico inverso</option>
+                        <option value="relevance">Rilevanza (Default API)</option>
                       </select>
                       <ChevronDown className="absolute right-2 top-2 h-4 w-4 text-gray-500 dark:text-slate-400 pointer-events-none" />
                     </div>
