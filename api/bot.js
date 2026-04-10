@@ -2,7 +2,6 @@ import { Telegraf, Markup } from 'telegraf';
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 
-// Controllo di sicurezza all'avvio del container
 if (!BOT_TOKEN) {
   console.error("ERRORE FATALE: BOT_TOKEN mancante nelle variabili d'ambiente di Vercel.");
 }
@@ -19,6 +18,47 @@ async function translateText(text) {
     console.error("Errore di traduzione:", err);
     return text;
   }
+}
+
+// Funzione helper per generare la tastiera di navigazione
+function buildSearchKeyboard(query, currentIndex, totalItems, imageUrl) {
+  // Telegram limita il callback_data a 64 byte. Tronchiamo la query per sicurezza.
+  const safeQuery = query.substring(0, 35);
+  const buttons = [];
+
+  buttons.push([Markup.button.url('Scarica Originale (HD)', imageUrl)]);
+
+  const navButtons = [];
+  if (currentIndex > 0) {
+    navButtons.push(Markup.button.callback('⬅️ Prec', `nav_${currentIndex - 1}_${safeQuery}`));
+  } else {
+    navButtons.push(Markup.button.callback('⛔️', 'noop'));
+  }
+
+  navButtons.push(Markup.button.callback(`${currentIndex + 1} / ${totalItems}`, 'noop'));
+
+  if (currentIndex < totalItems - 1) {
+    navButtons.push(Markup.button.callback('Succ ➡️', `nav_${currentIndex + 1}_${safeQuery}`));
+  } else {
+    navButtons.push(Markup.button.callback('⛔️', 'noop'));
+  }
+
+  buttons.push(navButtons);
+  return Markup.inlineKeyboard(buttons);
+}
+
+// Funzione helper per estrarre e formattare un singolo risultato NASA
+function formatItemData(item) {
+  const itemData = item.data[0];
+  const imageUrl = item.links[0].href;
+
+  let description = itemData.description || 'Nessuna descrizione fornita dalla NASA.';
+  description = description.length > 600 ? description.substring(0, 600) + '...' : description;
+
+  const dateCreated = new Date(itemData.date_created).toLocaleDateString('it-IT');
+  const caption = `*${itemData.title}*\n📅 ${dateCreated}\n\n${description}`;
+
+  return { imageUrl, caption };
 }
 
 bot.start((ctx) => {
@@ -96,16 +136,10 @@ bot.command('cerca', async (ctx) => {
 
     if (items.length === 0) return ctx.reply(`Nessun risultato trovato per "${query}".`);
 
-    const itemData = items[0].data[0];
-    const imageUrl = items[0].links[0].href;
+    const currentIndex = 0;
+    const { imageUrl, caption } = formatItemData(items[currentIndex]);
+    const keyboard = buildSearchKeyboard(query, currentIndex, items.length, imageUrl);
 
-    let description = itemData.description || 'Nessuna descrizione.';
-    description = description.length > 600 ? description.substring(0, 600) + '...' : description;
-
-    const dateCreated = new Date(itemData.date_created).toLocaleDateString('it-IT');
-    const caption = `*${itemData.title}*\n📅 ${dateCreated}\n\n${description}`;
-
-    const keyboard = Markup.inlineKeyboard([Markup.button.url('Scarica Originale (HD)', imageUrl)]);
     await ctx.replyWithPhoto(imageUrl, { caption: caption, parse_mode: 'Markdown', ...keyboard });
   } catch (err) {
     console.error(err);
@@ -115,7 +149,50 @@ bot.command('cerca', async (ctx) => {
   }
 });
 
-// Esportazione Handler compatibile con ES Modules
+// Gestione dei click sulla paginazione
+bot.action(/^nav_(\d+)_(.+)$/, async (ctx) => {
+  try {
+    const currentIndex = parseInt(ctx.match[1], 10);
+    const query = ctx.match[2];
+
+    await ctx.answerCbQuery('Caricamento...');
+
+    const url = new URL('https://images-api.nasa.gov/search');
+    url.searchParams.append('q', query);
+    url.searchParams.append('media_type', 'image');
+
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Errore API NASA Search Pagination');
+
+    const data = await res.json();
+    const items = data.collection.items;
+
+    if (items.length === 0 || currentIndex >= items.length) {
+      return ctx.answerCbQuery('Nessun altro risultato disponibile.', { show_alert: true });
+    }
+
+    const { imageUrl, caption } = formatItemData(items[currentIndex]);
+    const keyboard = buildSearchKeyboard(query, currentIndex, items.length, imageUrl);
+
+    // Aggiorna l'immagine e il testo del messaggio esistente
+    await ctx.editMessageMedia({
+      type: 'photo',
+      media: imageUrl,
+      caption: caption,
+      parse_mode: 'Markdown'
+    }, {
+      reply_markup: keyboard.reply_markup
+    });
+
+  } catch (err) {
+    console.error(err);
+    ctx.answerCbQuery('Errore durante il caricamento del risultato.', { show_alert: true });
+  }
+});
+
+// Azione vuota per i pulsanti disabilitati (simbolo ⛔️ o contatore pagina)
+bot.action('noop', (ctx) => ctx.answerCbQuery());
+
 export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
