@@ -1,6 +1,12 @@
-const { Telegraf, Markup } = require('telegraf');
+import { Telegraf, Markup } from 'telegraf';
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
+
+// Controllo di sicurezza all'avvio del container
+if (!BOT_TOKEN) {
+  console.error("ERRORE FATALE: BOT_TOKEN mancante nelle variabili d'ambiente di Vercel.");
+}
+
 const bot = new Telegraf(BOT_TOKEN);
 
 async function translateText(text) {
@@ -28,14 +34,14 @@ bot.command('apod', async (ctx) => {
   let loadingMsg;
   try {
     loadingMsg = await ctx.reply('Recupero la foto del giorno in corso... 🛰️');
-    
+
     const res = await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY');
     if (!res.ok) throw new Error('Errore API NASA APOD');
     const data = await res.json();
 
     const safeExplanation = data.explanation.length > 800 ? data.explanation.substring(0, 800) + '...' : data.explanation;
     const caption = `*${data.title}*\n📅 ${data.date}\n\n${safeExplanation}`;
-    
+
     const keyboard = Markup.inlineKeyboard([Markup.button.callback('🇮🇹 Traduci in Italiano', 'translate_apod')]);
 
     if (data.media_type === 'video') {
@@ -47,7 +53,7 @@ bot.command('apod', async (ctx) => {
     console.error(err);
     ctx.reply('Impossibile recuperare la foto del giorno.');
   } finally {
-    if (loadingMsg) ctx.deleteMessage(loadingMsg.message_id).catch(() => {});
+    if (loadingMsg) ctx.deleteMessage(loadingMsg.message_id).catch(() => { });
   }
 });
 
@@ -59,7 +65,7 @@ bot.action('translate_apod', async (ctx) => {
 
     const translatedTitle = await translateText(data.title);
     const translatedExp = await translateText(data.explanation);
-    
+
     const safeExplanation = translatedExp.length > 800 ? translatedExp.substring(0, 800) + '...' : translatedExp;
     const caption = `*${translatedTitle}*\n📅 ${data.date}\n\n${safeExplanation}`;
 
@@ -77,14 +83,14 @@ bot.command('cerca', async (ctx) => {
   let loadingMsg;
   try {
     loadingMsg = await ctx.reply(`Ricerca per "${query}"... 🔭`);
-    
+
     const url = new URL('https://images-api.nasa.gov/search');
     url.searchParams.append('q', query);
     url.searchParams.append('media_type', 'image');
-    
+
     const res = await fetch(url);
     if (!res.ok) throw new Error('Errore API NASA Search');
-    
+
     const data = await res.json();
     const items = data.collection.items;
 
@@ -92,10 +98,10 @@ bot.command('cerca', async (ctx) => {
 
     const itemData = items[0].data[0];
     const imageUrl = items[0].links[0].href;
-    
+
     let description = itemData.description || 'Nessuna descrizione.';
     description = description.length > 600 ? description.substring(0, 600) + '...' : description;
-    
+
     const dateCreated = new Date(itemData.date_created).toLocaleDateString('it-IT');
     const caption = `*${itemData.title}*\n📅 ${dateCreated}\n\n${description}`;
 
@@ -105,12 +111,12 @@ bot.command('cerca', async (ctx) => {
     console.error(err);
     ctx.reply('Errore server NASA.');
   } finally {
-    if (loadingMsg) ctx.deleteMessage(loadingMsg.message_id).catch(() => {});
+    if (loadingMsg) ctx.deleteMessage(loadingMsg.message_id).catch(() => { });
   }
 });
 
-// Esportazione Handler per Vercel Serverless Function
-module.exports = async (req, res) => {
+// Esportazione Handler compatibile con ES Modules
+export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
       await bot.handleUpdate(req.body);
@@ -120,4 +126,4 @@ module.exports = async (req, res) => {
     console.error('Errore Webhook:', err);
     res.status(500).send('Internal Server Error');
   }
-};
+}
