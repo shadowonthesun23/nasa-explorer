@@ -63,7 +63,8 @@ function formatItemData(item) {
 
 bot.start(async (ctx) => {
   const logoUrl = 'https://nasa-explorer-space.vercel.app/logo.png';
-  const welcomeMessage = 'Benvenuto nel NASA Explorer Bot! 🚀\n\n' +
+  const welcomeMessage = 'Benvenuto nel NASA Explorer Bot! 🚀\n' +
+    'Il tuo portale di accesso diretto all\'archivio ufficiale della NASA.\n\n' +
     'Comandi disponibili:\n' +
     '🌌 /apod - Mostra la Foto Astronomica del Giorno\n' +
     '🔍 /cerca <termine> - Cerca una foto (es. /cerca Apollo 11)\n\n' +
