@@ -61,13 +61,19 @@ function formatItemData(item) {
   return { imageUrl, caption };
 }
 
-bot.start((ctx) => {
-  ctx.reply(
-    'Benvenuto nel NASA Explorer Bot! 🚀\n\n' +
+bot.start(async (ctx) => {
+  const logoUrl = 'https://nasa-explorer-space.vercel.app/logo.png';
+  const welcomeMessage = 'Benvenuto nel NASA Explorer Bot! 🚀\n\n' +
     'Comandi disponibili:\n' +
     '🌌 /apod - Mostra la Foto Astronomica del Giorno\n' +
-    '🔍 /cerca <termine> - Cerca una foto (es. /cerca Apollo 11)'
-  );
+    '🔍 /cerca <termine> - Cerca una foto (es. /cerca Apollo 11)';
+
+  try {
+    await ctx.replyWithPhoto(logoUrl, { caption: welcomeMessage });
+  } catch (err) {
+    console.error("Errore invio logo:", err);
+    await ctx.reply(welcomeMessage);
+  }
 });
 
 bot.command('apod', async (ctx) => {
