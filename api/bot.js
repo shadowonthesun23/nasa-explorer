@@ -1,6 +1,7 @@
 import { Telegraf, Markup } from 'telegraf';
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
+const NASA_API_KEY = process.env.NASA_API_KEY || 'DEMO_KEY';
 
 if (!BOT_TOKEN) {
   console.error("ERRORE FATALE: BOT_TOKEN mancante nelle variabili d'ambiente di Vercel.");
@@ -71,11 +72,28 @@ bot.start(async (ctx) => {
     '_"Da qualche parte, qualcosa di incredibile attende di essere scoperto."_\n' +
     '— Carl Sagan';
 
+  // Pulsanti social e supporto trasparenti e non intrusivi
+  const startKeyboard = Markup.inlineKeyboard([
+    [Markup.button.url('☕ Offrimi un caffè', 'https://buymeacoffee.com/antonello23')],
+    [
+      Markup.button.url('✈️ Telegram', 'https://t.me/shadowonthesun23'),
+      Markup.button.url('𝕏 X (Twitter)', 'https://x.com/antonello23')
+    ],
+    [Markup.button.url('📸 Instagram', 'https://www.instagram.com/antonelloan23/')]
+  ]);
+
   try {
-    await ctx.replyWithPhoto(logoUrl, { caption: welcomeMessage, parse_mode: 'Markdown' });
+    await ctx.replyWithPhoto(logoUrl, {
+      caption: welcomeMessage,
+      parse_mode: 'Markdown',
+      ...startKeyboard
+    });
   } catch (err) {
     console.error("Errore invio logo:", err);
-    await ctx.reply(welcomeMessage, { parse_mode: 'Markdown' });
+    await ctx.reply(welcomeMessage, {
+      parse_mode: 'Markdown',
+      ...startKeyboard
+    });
   }
 });
 
@@ -84,7 +102,7 @@ bot.command('apod', async (ctx) => {
   try {
     loadingMsg = await ctx.reply('Recupero la foto del giorno in corso... 🛰️');
 
-    const res = await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY');
+    const res = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`);
     if (!res.ok) throw new Error('Errore API NASA APOD');
     const data = await res.json();
 
@@ -109,7 +127,7 @@ bot.command('apod', async (ctx) => {
 bot.action('translate_apod', async (ctx) => {
   try {
     await ctx.answerCbQuery('Traduzione in corso...');
-    const res = await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY');
+    const res = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`);
     const data = await res.json();
 
     const translatedTitle = await translateText(data.title);
