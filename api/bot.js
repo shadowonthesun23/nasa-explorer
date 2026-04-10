@@ -66,13 +66,15 @@ bot.start(async (ctx) => {
   const welcomeMessage = 'Benvenuto nel NASA Explorer Bot! 🚀\n\n' +
     'Comandi disponibili:\n' +
     '🌌 /apod - Mostra la Foto Astronomica del Giorno\n' +
-    '🔍 /cerca <termine> - Cerca una foto (es. /cerca Apollo 11)';
+    '🔍 /cerca <termine> - Cerca una foto (es. /cerca Apollo 11)\n\n' +
+    '_"Da qualche parte, qualcosa di incredibile attende di essere scoperto."_\n' +
+    '— Carl Sagan';
 
   try {
-    await ctx.replyWithPhoto(logoUrl, { caption: welcomeMessage });
+    await ctx.replyWithPhoto(logoUrl, { caption: welcomeMessage, parse_mode: 'Markdown' });
   } catch (err) {
     console.error("Errore invio logo:", err);
-    await ctx.reply(welcomeMessage);
+    await ctx.reply(welcomeMessage, { parse_mode: 'Markdown' });
   }
 });
 
